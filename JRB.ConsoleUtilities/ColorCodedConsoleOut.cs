@@ -36,8 +36,11 @@ namespace JRB.ConsoleUtilities
 
         #region - Overridden Methods -
 
-        public override void Write(object value)
+        public override void Write(object? value)
         {
+            if (value == null) 
+                throw new ArgumentNullException(nameof(value));
+
             if (IsColorCoded(value))
             {
                 ColorCodedWrite("{0}", value);
@@ -48,8 +51,11 @@ namespace JRB.ConsoleUtilities
             }
         }
 
-        public override void Write(string format, object arg0)
+        public override void Write(string format, object? arg0)
         {
+            if (arg0 == null)
+                throw new ArgumentNullException(nameof(arg0));
+
             if (IsColorCoded(arg0))
             {
                 ColorCodedWrite(format, arg0);
@@ -60,8 +66,14 @@ namespace JRB.ConsoleUtilities
             }
         }
 
-        public override void Write(string format, object arg0, object arg1)
+        public override void Write(string format, object? arg0, object? arg1)
         {
+            if (arg0 == null)
+                throw new ArgumentNullException(nameof(arg0));
+
+            if (arg1 == null)
+                throw new ArgumentNullException(nameof(arg1));
+
             if (IsColorCoded(arg0, arg1))
             {
                 ColorCodedWrite(format, arg0, arg1);
@@ -72,8 +84,17 @@ namespace JRB.ConsoleUtilities
             }
         }
 
-        public override void Write(string format, object arg0, object arg1, object arg2)
+        public override void Write(string format, object? arg0, object? arg1, object? arg2)
         {
+            if (arg0 == null)
+                throw new ArgumentNullException(nameof(arg0));
+
+            if (arg1 == null)
+                throw new ArgumentNullException(nameof(arg1));
+
+            if (arg2 == null)
+                throw new ArgumentNullException(nameof(arg2));
+
             if (IsColorCoded(arg0, arg1, arg2))
             {
                 ColorCodedWrite(format, arg0, arg1, arg2);
@@ -84,8 +105,11 @@ namespace JRB.ConsoleUtilities
             }
         }
 
-        public override void Write(string format, params object[] arg)
+        public override void Write(string format, params object?[] arg)
         {
+            if (arg == null)
+                throw new ArgumentNullException(nameof(arg));
+
             if (IsColorCoded(arg))
             {
                 ColorCodedWrite(format, arg);
@@ -96,8 +120,11 @@ namespace JRB.ConsoleUtilities
             }
         }
 
-        public override void WriteLine(object value)
+        public override void WriteLine(object? value)
         {
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
+
             if (IsColorCoded(value))
             {
                 ColorCodedWriteLine("{0}", value);
@@ -108,8 +135,11 @@ namespace JRB.ConsoleUtilities
             }
         }
 
-        public override void WriteLine(string format, object arg0)
+        public override void WriteLine(string format, object? arg0)
         {
+            if (arg0 == null)
+                throw new ArgumentNullException(nameof(arg0));
+
             if (IsColorCoded(arg0))
             {
                 ColorCodedWriteLine(format, arg0);
@@ -120,8 +150,14 @@ namespace JRB.ConsoleUtilities
             }
         }
 
-        public override void WriteLine(string format, object arg0, object arg1)
+        public override void WriteLine(string format, object? arg0, object? arg1)
         {
+            if (arg0 == null)
+                throw new ArgumentNullException(nameof(arg0));
+
+            if (arg1 == null)
+                throw new ArgumentNullException(nameof(arg1));
+
             if (IsColorCoded(arg0, arg1))
             {
                 ColorCodedWriteLine(format, arg0, arg1);
@@ -132,8 +168,17 @@ namespace JRB.ConsoleUtilities
             }
         }
 
-        public override void WriteLine(string format, object arg0, object arg1, object arg2)
+        public override void WriteLine(string format, object? arg0, object? arg1, object? arg2)
         {
+            if (arg0 == null)
+                throw new ArgumentNullException(nameof(arg0));
+
+            if (arg1 == null)
+                throw new ArgumentNullException(nameof(arg1));
+
+            if (arg2 == null)
+                throw new ArgumentNullException(nameof(arg2));
+
             if (IsColorCoded(arg0, arg1, arg2))
             {
                 ColorCodedWriteLine(format, arg0, arg1, arg2);
@@ -144,8 +189,11 @@ namespace JRB.ConsoleUtilities
             }
         }
 
-        public override void WriteLine(string format, params object[] arg)
+        public override void WriteLine(string format, params object?[] arg)
         {
+            if (arg == null)
+                throw new ArgumentNullException(nameof(arg));
+
             if (IsColorCoded(arg))
             {
                 ColorCodedWriteLine(format, arg);
@@ -203,7 +251,7 @@ namespace JRB.ConsoleUtilities
                 if (IsColorCoded(obj))
                 {
                     bool alreadyUsed = argIndexesUsed[token.ArgIndex];
-                    yield return new ColorCodedTokenConsoleWriter(token, obj as IColorCodedItem, alreadyUsed);
+                    yield return new ColorCodedTokenConsoleWriter(token, (IColorCodedItem)obj, alreadyUsed);
                     argIndexesUsed[token.ArgIndex] = true;
                 }
                 else
