@@ -110,9 +110,9 @@ namespace JRB.ConsoleUtilities
             if (arg == null)
                 throw new ArgumentNullException(nameof(arg));
 
-            if (IsColorCoded(arg))
+            if (IsColorCoded(arg!))
             {
-                ColorCodedWrite(format, arg);
+                ColorCodedWrite(format, arg!);
             }
             else
             {
@@ -194,9 +194,9 @@ namespace JRB.ConsoleUtilities
             if (arg == null)
                 throw new ArgumentNullException(nameof(arg));
 
-            if (IsColorCoded(arg))
+            if (IsColorCoded(arg!))
             {
-                ColorCodedWriteLine(format, arg);
+                ColorCodedWriteLine(format, arg!);
             }
             else
             {
