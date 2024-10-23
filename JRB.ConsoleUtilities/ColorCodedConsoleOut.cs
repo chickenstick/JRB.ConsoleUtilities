@@ -6,6 +6,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
+using JRB.ConsoleUtilities;
+using JRB.ConsoleUtilities.WordWriting;
+
 namespace JRB.ConsoleUtilities
 {
     public class ColorCodedConsoleOut : StreamWriter
@@ -20,10 +23,11 @@ namespace JRB.ConsoleUtilities
 
         #region - Constructor -
 
-        public ColorCodedConsoleOut()
+        public ColorCodedConsoleOut(bool keepWordsOnSameLine = false)
             : base(Console.OpenStandardOutput())
         {
             AutoFlush = true;
+            KeepWordsOnSameLine = keepWordsOnSameLine; 
         }
 
         #endregion
@@ -31,6 +35,7 @@ namespace JRB.ConsoleUtilities
         #region - Properties -
 
         public override Encoding Encoding => throw new NotImplementedException();
+        public bool KeepWordsOnSameLine { get; set; }
 
         #endregion
 
@@ -225,11 +230,13 @@ namespace JRB.ConsoleUtilities
         private void ColorCodedWriteLine(string format, params object[] args)
         {
             ColorCodedWrite(format, args);
-            Console.WriteLine();
+            base.WriteLine();
         }
 
         private IEnumerable<IConsoleWriterBase> GetConsoleWriters(string format, object[] args)
         {
+            IWordWriter wordWriter = KeepWordsOnSameLine ? new KeepWordOnSameLineWriter() : new StandardWordWriter();
+
             int currentIndex = 0;
             List<CompositeFormatToken> allTokens = FindCompositeFormatTokens(format).OrderBy(t => t.Index).ToList();
             Dictionary<int, bool> argIndexesUsed = new Dictionary<int, bool>();
@@ -238,7 +245,7 @@ namespace JRB.ConsoleUtilities
                 string preamble = format.Substring(currentIndex, token.Index - currentIndex);
                 if (!string.IsNullOrEmpty(preamble))
                 {
-                    yield return new StandardConsoleWriter(preamble);
+                    yield return new StandardConsoleWriter(wordWriter, preamble);
                 }
 
                 if (!argIndexesUsed.ContainsKey(token.ArgIndex))
@@ -251,12 +258,12 @@ namespace JRB.ConsoleUtilities
                 if (IsColorCoded(obj))
                 {
                     bool alreadyUsed = argIndexesUsed[token.ArgIndex];
-                    yield return new ColorCodedTokenConsoleWriter(token, (IColorCodedItem)obj, alreadyUsed);
+                    yield return new ColorCodedTokenConsoleWriter(wordWriter, token, (IColorCodedItem)obj, alreadyUsed);
                     argIndexesUsed[token.ArgIndex] = true;
                 }
                 else
                 {
-                    yield return new TokenConsoleWriter(token, obj);
+                    yield return new TokenConsoleWriter(wordWriter, token, obj);
                 }
 
                 currentIndex += token.RawText.Length;
@@ -265,7 +272,7 @@ namespace JRB.ConsoleUtilities
             if (currentIndex < format.Length)
             {
                 string remainder = format.Substring(currentIndex, format.Length - currentIndex);
-                yield return new StandardConsoleWriter(remainder);
+                yield return new StandardConsoleWriter(wordWriter, remainder);
             }
         }
 
@@ -324,16 +331,18 @@ namespace JRB.ConsoleUtilities
         private class StandardConsoleWriter : IConsoleWriterBase
         {
 
+            private IWordWriter _wordWriter;
             private string _rawText;
 
-            public StandardConsoleWriter(string rawText)
+            public StandardConsoleWriter(IWordWriter wordWriter, string rawText)
             {
+                _wordWriter = wordWriter;
                 _rawText = rawText;
             }
 
             public void WriteToConsole()
             {
-                Console.Write(_rawText);
+                _wordWriter.Write(_rawText);
             }
 
         }
@@ -341,11 +350,13 @@ namespace JRB.ConsoleUtilities
         private class TokenConsoleWriter : IConsoleWriterBase
         {
 
+            private IWordWriter _wordWriter;
             private CompositeFormatToken _token;
             private object _arg;
 
-            public TokenConsoleWriter(CompositeFormatToken token, object arg)
+            public TokenConsoleWriter(IWordWriter wordWriter, CompositeFormatToken token, object arg)
             {
+                _wordWriter = wordWriter;
                 _token = token;
                 _arg = arg;
             }
@@ -353,7 +364,7 @@ namespace JRB.ConsoleUtilities
             public void WriteToConsole()
             {
                 string token = _token.ToArgIndexZero();
-                Console.Write(token, _arg);
+                _wordWriter.Write(token, _arg);
             }
 
         }
@@ -361,12 +372,14 @@ namespace JRB.ConsoleUtilities
         private class ColorCodedTokenConsoleWriter : IConsoleWriterBase
         {
 
+            private IWordWriter _wordWriter;
             private CompositeFormatToken _token;
             private IColorCodedItem _arg;
             private bool _alreadyUsedArg;
 
-            public ColorCodedTokenConsoleWriter(CompositeFormatToken token, IColorCodedItem arg, bool alreadyUsedArg)
+            public ColorCodedTokenConsoleWriter(IWordWriter wordWriter, CompositeFormatToken token, IColorCodedItem arg, bool alreadyUsedArg)
             {
+                _wordWriter = wordWriter;
                 _token = token;
                 _arg = arg;
                 _alreadyUsedArg = alreadyUsedArg;
@@ -377,7 +390,7 @@ namespace JRB.ConsoleUtilities
                 string token = _token.ToArgIndexZero();
                 Console.ForegroundColor = _arg.OutputColor;
                 string text = _alreadyUsedArg ? _arg.GetSubsequentDisplayText() : _arg.GetInitialDisplayText();
-                Console.Write(token, text);
+                _wordWriter.Write(token, text);
                 Console.ResetColor();
             }
 

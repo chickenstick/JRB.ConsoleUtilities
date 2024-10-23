@@ -1,11 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>2.1.0.0</Version>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\JRB.ConsoleUtilities\JRB.ConsoleUtilities.csproj" />
+  </ItemGroup>
 
 </Project>

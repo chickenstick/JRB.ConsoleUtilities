@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JRB.ConsoleUtilities", "JRB.ConsoleUtilities\JRB.ConsoleUtilities.csproj", "{4ECB5DBC-AEC7-463B-8763-530BCF030409}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JRB.ConsoleUtilities", "JRB.ConsoleUtilities\JRB.ConsoleUtilities.csproj", "{4ECB5DBC-AEC7-463B-8763-530BCF030409}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestConsole", "TestConsole\TestConsole.csproj", "{6EEBAB35-1989-4841-B4ED-54535D409553}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{4ECB5DBC-AEC7-463B-8763-530BCF030409}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4ECB5DBC-AEC7-463B-8763-530BCF030409}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4ECB5DBC-AEC7-463B-8763-530BCF030409}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EEBAB35-1989-4841-B4ED-54535D409553}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EEBAB35-1989-4841-B4ED-54535D409553}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EEBAB35-1989-4841-B4ED-54535D409553}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EEBAB35-1989-4841-B4ED-54535D409553}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
