@@ -53,7 +53,7 @@ namespace JRB.ConsoleUtilities.WordWriting
 
         private IEnumerable<string> SplitWords(string value)
         {
-            return value.Split(null).Select(s => s.Trim());
+            return value.Split(null).Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => s.Trim());
         }
 
         private void AddSpace()
