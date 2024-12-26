@@ -27,14 +27,14 @@ namespace JRB.ConsoleUtilities
             : base(Console.OpenStandardOutput())
         {
             AutoFlush = true;
-            KeepWordsOnSameLine = keepWordsOnSameLine; 
+            KeepWordsOnSameLine = keepWordsOnSameLine;
         }
 
         #endregion
 
         #region - Properties -
 
-        public override Encoding Encoding => throw new NotImplementedException();
+        public override Encoding Encoding => Console.OutputEncoding;
         public bool KeepWordsOnSameLine { get; set; }
 
         #endregion
@@ -43,17 +43,10 @@ namespace JRB.ConsoleUtilities
 
         public override void Write(object? value)
         {
-            if (value == null) 
+            if (value == null)
                 throw new ArgumentNullException(nameof(value));
 
-            if (IsColorCoded(value))
-            {
-                ColorCodedWrite("{0}", value);
-            }
-            else
-            {
-                base.Write(value);
-            }
+            ColorCodedWrite("{0}", value);
         }
 
         public override void Write(string format, object? arg0)
@@ -61,14 +54,7 @@ namespace JRB.ConsoleUtilities
             if (arg0 == null)
                 throw new ArgumentNullException(nameof(arg0));
 
-            if (IsColorCoded(arg0))
-            {
-                ColorCodedWrite(format, arg0);
-            }
-            else
-            {
-                base.Write(format, arg0);
-            }
+            ColorCodedWrite(format, arg0);
         }
 
         public override void Write(string format, object? arg0, object? arg1)
@@ -79,14 +65,7 @@ namespace JRB.ConsoleUtilities
             if (arg1 == null)
                 throw new ArgumentNullException(nameof(arg1));
 
-            if (IsColorCoded(arg0, arg1))
-            {
-                ColorCodedWrite(format, arg0, arg1);
-            }
-            else
-            {
-                base.Write(format, arg0, arg1);
-            }
+            ColorCodedWrite(format, arg0, arg1);
         }
 
         public override void Write(string format, object? arg0, object? arg1, object? arg2)
@@ -100,14 +79,7 @@ namespace JRB.ConsoleUtilities
             if (arg2 == null)
                 throw new ArgumentNullException(nameof(arg2));
 
-            if (IsColorCoded(arg0, arg1, arg2))
-            {
-                ColorCodedWrite(format, arg0, arg1, arg2);
-            }
-            else
-            {
-                base.Write(format, arg0, arg1, arg2);
-            }
+            ColorCodedWrite(format, arg0, arg1, arg2);
         }
 
         public override void Write(string format, params object?[] arg)
@@ -115,14 +87,7 @@ namespace JRB.ConsoleUtilities
             if (arg == null)
                 throw new ArgumentNullException(nameof(arg));
 
-            if (IsColorCoded(arg!))
-            {
-                ColorCodedWrite(format, arg!);
-            }
-            else
-            {
-                base.Write(format, arg);
-            }
+            ColorCodedWrite(format, arg!);
         }
 
         public override void WriteLine(object? value)
@@ -130,14 +95,7 @@ namespace JRB.ConsoleUtilities
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
 
-            if (IsColorCoded(value))
-            {
-                ColorCodedWriteLine("{0}", value);
-            }
-            else
-            {
-                base.WriteLine(value);
-            }
+            ColorCodedWriteLine("{0}", value);
         }
 
         public override void WriteLine(string format, object? arg0)
@@ -145,14 +103,7 @@ namespace JRB.ConsoleUtilities
             if (arg0 == null)
                 throw new ArgumentNullException(nameof(arg0));
 
-            if (IsColorCoded(arg0))
-            {
-                ColorCodedWriteLine(format, arg0);
-            }
-            else
-            {
-                base.WriteLine(format, arg0);
-            }
+            ColorCodedWriteLine(format, arg0);
         }
 
         public override void WriteLine(string format, object? arg0, object? arg1)
@@ -163,14 +114,7 @@ namespace JRB.ConsoleUtilities
             if (arg1 == null)
                 throw new ArgumentNullException(nameof(arg1));
 
-            if (IsColorCoded(arg0, arg1))
-            {
-                ColorCodedWriteLine(format, arg0, arg1);
-            }
-            else
-            {
-                base.WriteLine(format, arg0, arg1);
-            }
+            ColorCodedWriteLine(format, arg0, arg1);
         }
 
         public override void WriteLine(string format, object? arg0, object? arg1, object? arg2)
@@ -184,14 +128,7 @@ namespace JRB.ConsoleUtilities
             if (arg2 == null)
                 throw new ArgumentNullException(nameof(arg2));
 
-            if (IsColorCoded(arg0, arg1, arg2))
-            {
-                ColorCodedWriteLine(format, arg0, arg1, arg2);
-            }
-            else
-            {
-                base.WriteLine(format, arg0, arg1, arg2);
-            }
+            ColorCodedWriteLine(format, arg0, arg1, arg2);
         }
 
         public override void WriteLine(string format, params object?[] arg)
@@ -199,14 +136,7 @@ namespace JRB.ConsoleUtilities
             if (arg == null)
                 throw new ArgumentNullException(nameof(arg));
 
-            if (IsColorCoded(arg!))
-            {
-                ColorCodedWriteLine(format, arg!);
-            }
-            else
-            {
-                base.WriteLine(format, arg);
-            }
+            ColorCodedWriteLine(format, arg!);
         }
 
         #endregion
@@ -218,7 +148,7 @@ namespace JRB.ConsoleUtilities
         private bool IsColorCoded(object arg0, object arg1, object arg2) => IsColorCoded(arg0) || IsColorCoded(arg1) || IsColorCoded(arg2);
         private bool IsColorCoded(object[] arg) => arg.Any(IsColorCoded);
 
-        private void ColorCodedWrite(string format, params object[] args)
+        private void ColorCodedWrite(string? format, params object[] args)
         {
             List<IConsoleWriterBase> allWriters = GetConsoleWriters(format, args).ToList();
             foreach (IConsoleWriterBase consoleWriter in allWriters)
@@ -227,14 +157,17 @@ namespace JRB.ConsoleUtilities
             }
         }
 
-        private void ColorCodedWriteLine(string format, params object[] args)
+        private void ColorCodedWriteLine(string? format, params object[] args)
         {
             ColorCodedWrite(format, args);
             base.WriteLine();
         }
 
-        private IEnumerable<IConsoleWriterBase> GetConsoleWriters(string format, object[] args)
+        private IEnumerable<IConsoleWriterBase> GetConsoleWriters(string? format, object[] args)
         {
+            if (format == null)
+                yield break;
+
             IWordWriter wordWriter = KeepWordsOnSameLine ? new KeepWordOnSameLineWriter() : new StandardWordWriter();
 
             int currentIndex = 0;
@@ -276,8 +209,11 @@ namespace JRB.ConsoleUtilities
             }
         }
 
-        private IEnumerable<CompositeFormatToken> FindCompositeFormatTokens(string format)
+        private IEnumerable<CompositeFormatToken> FindCompositeFormatTokens(string? format)
         {
+            if (format == null)
+                yield break;
+
             MatchCollection col = _findTokenRegex.Matches(format);
             foreach (Match match in col)
             {
